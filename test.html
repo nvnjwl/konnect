@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Tool Demo</title>
+    <link href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #18122B;
+            --panel-bg: #393053;
+            --accent: #9D44C0;
+            --accent2: #F39F5A;
+            --accent3: #EA1179;
+            --accent4: #03C988;
+            --text: #F7F7F7;
+            --muted: #A3A3A3;
+            --input-bg: #2D3250;
+            --input-border: #9D44C0;
+            --button-bg: linear-gradient(90deg, #9D44C0 0%, #EA1179 100%);
+            --button-hover: linear-gradient(90deg, #EA1179 0%, #9D44C0 100%);
+            --shadow: 0 4px 24px #0005;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Fira Mono', monospace;
+            min-height: 100vh;
+        }
+
+        .devtools-panel {
+            background: var(--panel-bg);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            padding: 36px 32px 28px 32px;
+            max-width: 440px;
+            margin: 48px auto 36px auto;
+            border: 2px solid var(--accent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .devtools-panel::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 20px;
+            background: linear-gradient(120deg, var(--accent), var(--accent2), var(--accent3), var(--accent4));
+            z-index: 0;
+            opacity: 0.18;
+            pointer-events: none;
+        }
+
+        .devtools-panel h2 {
+            margin-top: 0;
+            color: var(--accent2);
+            font-size: 1.7em;
+            margin-bottom: 22px;
+            letter-spacing: 2px;
+            font-weight: 700;
+            text-shadow: 0 2px 8px #0004;
+            z-index: 1;
+            position: relative;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 18px;
+            z-index: 1;
+            position: relative;
+        }
+
+        .setting-item input[type="checkbox"] {
+            accent-color: var(--accent3);
+            width: 22px;
+            height: 22px;
+            margin-right: 12px;
+            border-radius: 6px;
+            border: 2px solid var(--accent2);
+            background: var(--input-bg);
+            transition: border 0.2s;
+        }
+
+        .setting-item label {
+            font-size: 1.13em;
+            cursor: pointer;
+            user-select: none;
+            color: var(--accent4);
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: color 0.2s;
+        }
+
+        .setting-item input[type="text"] {
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
+            color: var(--text);
+            border-radius: 7px;
+            padding: 8px 12px;
+            font-size: 1em;
+            margin-right: 12px;
+            outline: none;
+            transition: border 0.2s;
+            width: 140px;
+        }
+
+        .setting-item input[type="text"]:focus {
+            border-color: var(--accent3);
+        }
+
+        #startConnectButton {
+            background: var(--button-bg);
+            color: #fff;
+            padding: 16px 0;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.18em;
+            cursor: pointer;
+            max-width: 100%;
+            margin: 18px auto 0 auto;
+            transition: background 0.22s, box-shadow 0.22s;
+            box-shadow: 0 2px 12px #EA117955;
+            border: none;
+            display: block;
+            letter-spacing: 1.5px;
+            z-index: 1;
+            position: relative;
+        }
+
+        #startConnectButton:hover {
+            background: var(--button-hover);
+            box-shadow: 0 4px 24px #9D44C055;
+        }
+
+        .actions-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: center;
+            margin: 0 auto 24px auto;
+            max-width: 600px;
+        }
+
+        .action-btn {
+            background: linear-gradient(90deg, var(--accent2) 0%, var(--accent3) 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 22px;
+            font-size: 1em;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #0003;
+            transition: background 0.2s, transform 0.15s;
+            outline: none;
+            letter-spacing: 1px;
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(90deg, var(--accent3) 0%, var(--accent2) 100%);
+            transform: translateY(-2px) scale(1.04);
+        }
+
+        .action-btn[data-type="error"] {
+            background: linear-gradient(90deg, #EA1179 0%, #F39F5A 100%);
+        }
+
+        .action-btn[data-type="info"] {
+            background: linear-gradient(90deg, #03C988 0%, #9D44C0 100%);
+        }
+
+        .action-btn[data-type="warn"] {
+            background: linear-gradient(90deg, #F39F5A 0%, #EA1179 100%);
+        }
+
+        .action-btn[data-type="debug"] {
+            background: linear-gradient(90deg, #9D44C0 0%, #03C988 100%);
+        }
+
+        .action-btn[data-type="log"] {
+            background: linear-gradient(90deg, #393053 0%, #F39F5A 100%);
+        }
+
+        .action-btn[data-type="fetch"] {
+            background: linear-gradient(90deg, #03C988 0%, #EA1179 100%);
+        }
+
+        .action-btn[data-type="xhr"] {
+            background: linear-gradient(90deg, #9D44C0 0%, #F39F5A 100%);
+        }
+
+        .result-box {
+            background: var(--panel-bg);
+            color: var(--text);
+            padding: 18px 20px;
+            margin: 0 auto 32px auto;
+            border-radius: 10px;
+            font-size: 1.04em;
+            font-family: 'Fira Mono', monospace;
+            max-width: 600px;
+            min-height: 60px;
+            box-shadow: 0 2px 12px #0002;
+            white-space: pre-wrap;
+            word-break: break-word;
+            border: 2px solid var(--accent4);
+            transition: border 0.2s;
+        }
+
+        @media (max-width: 700px) {
+
+            .devtools-panel,
+            .result-box {
+                max-width: 98vw;
+            }
+
+            .actions-bar {
+                max-width: 98vw;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/rrweb@latest/dist/rrweb.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
+
+
+
+    <script src="debugmodesdk.js"></script>
+</head>
+
+<body>
+
+    <div class="devtools-panel">
+        <h2>🌈 Debug Tool Demo</h2>
+        <div class="setting-item">
+            <input type="checkbox" id="networkCapture">
+            <label for="networkCapture">Network Capture</label>
+        </div>
+        <div class="setting-item">
+            <input type="checkbox" id="consoleCapture">
+            <label for="consoleCapture">Console Capture</label>
+        </div>
+        <div class="setting-item">
+            <input type="checkbox" id="errorLogging">
+            <label for="errorLogging">Error Logging</label>
+        </div>
+        <div class="setting-item">
+            <input type="checkbox" id="performanceMonitor">
+            <label for="performanceMonitor">Performance Monitor</label>
+        </div>
+        <div class="setting-item">
+            <input type="checkbox" id="uiHighlight">
+            <label for="uiHighlight">UI Highlight</label>
+        </div>
+        <div class="setting-item">
+            <input type="text" id="cpidInput" placeholder="Enter CPID value" value="231018025933483">
+            <label for="cpidInput">CPID</label>
+        </div>
+        <button id="startConnectButton">🚀 Start Connection</button>
+    </div>
+
+    <div class="actions-bar" id="actionsBar">
+        <button class="action-btn" data-type="error" id="errorBtn">Error</button>
+        <button class="action-btn" data-type="info" id="infoBtn">Information</button>
+        <button class="action-btn" data-type="warn" id="warnBtn">Warning</button>
+        <button class="action-btn" data-type="debug" id="debugBtn">Debug</button>
+        <button class="action-btn" data-type="log" id="logBtn">Log</button>
+        <button class="action-btn" data-type="fetch" id="fetchBtn">Fetch Data</button>
+        <button class="action-btn" data-type="xhr" id="xhrBtn">Send XHR Request</button>
+    </div>
+
+    <div class="result-box" id="resultBox"></div>
+
+    <script>
+        // Settings logic (demo: just log changes)
+        [
+            "networkCapture",
+            "consoleCapture",
+            "errorLogging",
+            "performanceMonitor",
+            "uiHighlight"
+        ].forEach(id => {
+            document.getElementById(id).addEventListener("change", e => {
+                console.log(`${id} set to`, e.target.checked);
+                switch (id) {
+                    case "networkCapture":
+                        window.CAPTURE_NETWORK = e.target.checked;
+                        break;
+                    case "consoleCapture":
+                        break;
+                    case "errorLogging":
+                        break;
+                    case "performanceMonitor":
+                        break;
+                    case "uiHighlight":
+                        break;
+                }
+            });
+        });
+
+        // Action buttons
+        const resultBox = document.getElementById("resultBox");
+        const actions = {
+            error: () => { console.error("Random Error Message"); resultBox.textContent = "❌ Error: Random Error Message"; },
+            info: () => { console.info("Random Information Message"); resultBox.textContent = "ℹ️ Info: Random Information Message"; },
+            warn: () => { console.warn("Random Warning Message"); resultBox.textContent = "⚠️ Warning: Random Warning Message"; },
+            debug: () => { console.debug("Random Debug Message"); resultBox.textContent = "🐞 Debug: Random Debug Message"; },
+            log: () => { console.log("Random Log Message"); resultBox.textContent = "📝 Log: Random Log Message"; },
+            fetch: () => {
+                resultBox.textContent = "⏳ Fetching...";
+                fetch("https://jsonplaceholder.typicode.com/posts/1")
+                    .then(r => r.json())
+                    .then(data => {
+                        console.log(data);
+                        resultBox.textContent = JSON.stringify(data, null, 2);
+                    })
+                    .catch(e => {
+                        console.error("Fetch Error:", e);
+                        resultBox.textContent = "❌ Fetch Error: " + e;
+                    });
+            },
+            xhr: () => {
+                resultBox.textContent = "⏳ Sending XHR...";
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", "https://jsonplaceholder.typicode.com/posts/1");
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        console.log(data);
+                        resultBox.textContent = JSON.stringify(data, null, 2);
+                    } else {
+                        console.error("XHR Error:", xhr.statusText);
+                        resultBox.textContent = "❌ XHR Error: " + xhr.statusText;
+                    }
+                };
+                xhr.onerror = function () {
+                    console.error("XHR Network Error");
+                    resultBox.textContent = "❌ XHR Network Error";
+                };
+                xhr.send();
+            }
+        };
+
+        document.querySelectorAll(".action-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const type = btn.getAttribute("data-type");
+                actions[type]?.();
+            });
+        });
+
+        // Start connection logic
+        document.getElementById("startConnectButton").addEventListener("click", () => {
+            const cpidInput = document.getElementById("cpidInput");
+            if (cpidInput) {
+                localStorage.setItem("cpid", cpidInput.value);
+            }
+            if (window.DEBUG_MODE && typeof window.DEBUG_MODE.startDebugSession === "function") {
+                window.DEBUG_MODE.startDebugSession();
+            }
+            resultBox.textContent = "🚀 Debug session started!";
+        });
+    </script>
+</body>
+
+</html>

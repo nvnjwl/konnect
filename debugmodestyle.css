@@ -1,0 +1,21 @@
+#debugUI {
+  position: fixed;
+  height: 100px;
+  padding: 7px;
+  margin: 7px;
+  width: calc(100% - 30px);
+  background-color: rgb(230, 235, 240);
+  top: 0px;
+  border: 1px solid grey;
+}
+
+#receiverIdDiv {
+  color: rgb(7, 29, 29);
+  font-size: 30px;
+  float: right;
+}
+
+#statusDiv {
+  color: rgb(100, 219, 53);
+  font-size: 30px;
+}

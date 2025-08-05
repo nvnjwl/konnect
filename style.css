@@ -1,0 +1,175 @@
+body {
+  background-color: #f3f6fb;
+  font-family: Arial, sans-serif;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  background-color: white;
+    padding: 16px 70px;
+    color: #2c3e50;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+}
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: auto;
+  font-size: 24px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 24px
+}
+
+section {
+  padding: 0 70px;
+  margin-top: 90px;
+}
+
+h2, h3 {
+  padding-left: 20px;
+  color: #1e2c3b;
+}
+
+.box {
+  background-color: #fff;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 6px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.inline-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+button {
+  background-color: #253858;
+  color: white;
+  padding: 7px 14px;
+  margin: 4px 4px 4px 0;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+.status {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #555;
+}
+
+.label {
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #334155;
+}
+
+.response {
+  font-size: 13px;
+  color: #555;
+  margin: 8px 4px;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+.log-error{
+  color: rgb(97, 35, 35);
+  background-color: rgb(242 215 215);
+  margin: 2px 0;
+  padding: 2px 15px;
+  border-radius: 2px;
+  word-wrap: break-word;
+}
+.log-info{
+  margin: 2px 0;
+  padding: 2px 15px;
+  word-wrap: break-word;
+  border-radius: 2px;
+}
+.log-warn{
+  color: rgb(98, 101, 1);
+  background-color: #efefc0;
+  margin: 2px 0;
+  padding: 2px 15px;
+  word-wrap: break-word;
+  border-radius: 2px;
+}
+.log-default {
+  color: black;
+  margin: 2px 0;
+  padding: 2px 15px;
+  word-wrap: break-word;
+}
+.log-icon {
+  margin-right: 8px
+}
+.padding-0 {
+  padding: 0;
+}
+.section {
+  padding: 20px;
+  margin: 0;
+}
+.log-error .log-icon{
+  color: rgb(192, 26, 26)
+}
+
+#fullscreenDiv {
+  background-color: white;
+}
+.response-placeholder {
+  font-style: italic;
+  color: grey;
+  padding-left: 15px;
+  font-size: 14px;
+}
+.response-placeholder:not(:only-child) {
+  display: none;
+}
+
+#eachCommandResponse {
+  max-height: calc(40vh + 100px);
+  overflow-y: scroll;
+}
+#eachMessageCommand {
+  padding-top: 0;
+}
+
+#fullscreenDiv:fullscreen #eachCommandResponse {
+  max-height:  calc(100vh - 170px);
+}
+
+@media screen and (max-width: 600px) {
+  section {
+    padding: 0px;
+  }
+}
